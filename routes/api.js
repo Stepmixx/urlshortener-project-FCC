@@ -1,5 +1,6 @@
 const express = require("express");
 const ShortUrl = require("../models/shortUrl");
+const urlIsValid = require("../utils/urlIsValid");
 const router = express.Router();
 
 //Check if the given url exist and returns the shortenUrl from DB, else creates one and save it if the given url is valid
@@ -11,14 +12,13 @@ router.post("/shorturl", findByOriginalUrl, async (req, res) => {
     return;
   }
 
-  try {
-    const newUrl = new URL(url);
-    const newShortUrl = await ShortUrl.create({ original_url: newUrl });
+  if (urlIsValid(url)) {
+    const newShortUrl = await ShortUrl.create({ original_url: url });
     const { original_url, short_url } = await newShortUrl.save();
     res.status(201).json({ original_url, short_url });
-  } catch (error) {
-    res.status(400).json({ message: "invalid url" });
   }
+
+  res.status(400).json({ message: "invalid url" });
 });
 
 //Find in Db the given shortUrl from params and redirect to the originalUrl
