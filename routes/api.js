@@ -18,7 +18,7 @@ router.post("/shorturl", findByOriginalUrl, async (req, res) => {
     res.status(201).json({ original_url, short_url });
   }
 
-  res.status(400).json({ message: "invalid url" });
+  res.status(400).json({ error: "invalid url" });
 });
 
 //Find in Db the given shortUrl from params and redirect to the originalUrl
@@ -29,7 +29,7 @@ router.get("/shorturl/:shortUrl", async (req, res) => {
       const { original_url } = await ShortUrl.findOne({ short_url });
       res.redirect(original_url);
     } catch (err) {
-      res.status(400).json({ message: "this url doesn't exist" });
+      res.status(400).json({ error: "this url doesn't exist" });
     }
   }
 });
